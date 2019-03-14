@@ -74,7 +74,7 @@ export default class TodoList extends Component {
   }
 
   onChangeInput = event => {
-    let input = event.target.value
+    const input = event.target.value
     this.setState({ input })
   }
 
