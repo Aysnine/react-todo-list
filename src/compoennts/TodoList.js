@@ -61,16 +61,20 @@ export default class TodoList extends Component {
         { text: 'foo', level: DEFAULT_LEVEL },
         { text: 'bar', level: DEFAULT_LEVEL },
         { text: 'hello', level: DEFAULT_LEVEL },
-        { text: 'world', level: DEFAULT_LEVEL }
+        { text: 'world1', level: DEFAULT_LEVEL },
+        { text: 'world2', level: DEFAULT_LEVEL },
+        { text: 'world3', level: DEFAULT_LEVEL },
+        { text: 'world4', level: DEFAULT_LEVEL },
+        { text: 'world5', level: DEFAULT_LEVEL },
+        { text: 'world6', level: DEFAULT_LEVEL },
+        { text: 'world7', level: DEFAULT_LEVEL }
       ]
     }
   }
 
-  sortTodoListByLevel = () => {
-    const { todoList } = this.state
-    this.setState({
-      todoList: (todoList.sort((b, a) => a.level - b.level), todoList)
-    })
+  sortTodoListByLevel = (list) => {
+    list.sort((b, a) => a.level - b.level)
+    return list
   }
 
   onChangeInput = event => {
@@ -81,13 +85,11 @@ export default class TodoList extends Component {
   onClickAdd = () => {
     const { input, todoList } = this.state
     if (input.length >= 3) {
-      // * list.push(item) better than [...list, item]
+      todoList.push({ text: input, level: DEFAULT_LEVEL })
       this.setState({
         input: '',
-        todoList: (todoList.push({ text: input, level: DEFAULT_LEVEL }),
-        todoList)
+        todoList: this.sortTodoListByLevel(todoList)
       })
-      this.sortTodoListByLevel()
     } else {
       alert('至少3个字符')
     }
@@ -102,8 +104,7 @@ export default class TodoList extends Component {
   onIncrementItemLevel = (index, value) => {
     const { todoList } = this.state
     todoList[index].level += value
-    this.setState({ todoList })
-    this.sortTodoListByLevel()
+    this.setState({ todoList: this.sortTodoListByLevel(todoList) })
   }
 
   render() {
