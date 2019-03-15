@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import { css, cx } from 'emotion'
 import { DEFAULT_LEVEL } from '../constants/index.js'
 
@@ -8,81 +8,70 @@ const styles = css({
   // color: 'red'
 })
 
-export default class TodoList extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      input: '',
-      todoList: [
-        { text: 'foo', level: DEFAULT_LEVEL },
-        { text: 'bar', level: DEFAULT_LEVEL },
-        { text: 'hello', level: DEFAULT_LEVEL },
-        { text: 'world1', level: DEFAULT_LEVEL },
-        { text: 'world2', level: DEFAULT_LEVEL },
-        { text: 'world3', level: DEFAULT_LEVEL },
-        { text: 'world4', level: DEFAULT_LEVEL },
-        { text: 'world5', level: DEFAULT_LEVEL },
-        { text: 'world6', level: DEFAULT_LEVEL },
-        { text: 'world7', level: DEFAULT_LEVEL }
-      ]
-    }
-  }
+const sortTodoListByLevel = list => list.sort((b, a) => a.level - b.level)
 
-  sortTodoListByLevel = (list) => {
-    list.sort((b, a) => a.level - b.level)
-    return list
-  }
+export default () => {
+  const [input, setInput] = useState('')
+  const [todoList, setTodoList] = useState([
+    { text: 'foo', level: DEFAULT_LEVEL },
+    { text: 'bar', level: DEFAULT_LEVEL },
+    { text: 'hello', level: DEFAULT_LEVEL },
+    { text: 'world1', level: DEFAULT_LEVEL },
+    { text: 'world2', level: DEFAULT_LEVEL },
+    { text: 'world3', level: DEFAULT_LEVEL },
+    { text: 'world4', level: DEFAULT_LEVEL },
+    { text: 'world5', level: DEFAULT_LEVEL },
+    { text: 'world6', level: DEFAULT_LEVEL },
+    { text: 'world7', level: DEFAULT_LEVEL }
+  ])
 
-  onChangeInput = event => {
-    const input = event.target.value
-    this.setState({ input })
-  }
+  const onChangeInput = event => setInput(event.target.value)
 
-  onClickAdd = () => {
-    const { input, todoList } = this.state
+  const onClickAdd = () => {
     if (input.length >= 3) {
-      todoList.push({ text: input, level: DEFAULT_LEVEL })
-      this.setState({
-        input: '',
-        todoList: this.sortTodoListByLevel(todoList)
-      })
+      setInput('')
+      setTodoList(
+        sortTodoListByLevel([
+          ...todoList,
+          { text: input, level: DEFAULT_LEVEL }
+        ])
+      )
     } else {
       alert('至少3个字符')
     }
   }
 
-  onClickItemDel = index => {
-    const { todoList } = this.state
-    todoList.splice(index, 1)
-    this.setState({ todoList })
+  const onClickItemDel = index => {
+    setTodoList([...(todoList.splice(index, 1), todoList)])
   }
 
-  onIncrementItemLevel = (index, value) => {
-    const { todoList } = this.state
-    todoList[index].level += value
-    this.setState({ todoList: this.sortTodoListByLevel(todoList) })
-  }
-
-  render() {
-    const { todoList, input } = this.state
-    const totalCount = todoList.length
-    return (
-      <div className={cx(styles)}>
-        <input value={input} onChange={this.onChangeInput} />
-        <button onClick={this.onClickAdd}>ADD</button>
-        <p>total: {totalCount}</p>
-        <ul>
-          {todoList.map((item, index) => (
-            <TodoListItem
-              info={item}
-              key={index}
-              index={index}
-              onClickItemDel={this.onClickItemDel}
-              onIncrementItemLevel={this.onIncrementItemLevel}
-            />
-          ))}
-        </ul>
-      </div>
+  const onIncrementItemLevel = (index, value) => {
+    setTodoList(
+      sortTodoListByLevel(
+        todoList.map((item, itemIndex) => {
+          if (itemIndex === index) item.level += value
+          return item
+        })
+      )
     )
   }
+
+  return (
+    <div className={cx(styles)}>
+      <input value={input} onChange={onChangeInput} />
+      <button onClick={onClickAdd}>ADD</button>
+      <p>total: {todoList.length}</p>
+      <ul>
+        {todoList.map((item, index) => (
+          <TodoListItem
+            info={item}
+            key={index}
+            index={index}
+            onClickItemDel={onClickItemDel}
+            onIncrementItemLevel={onIncrementItemLevel}
+          />
+        ))}
+      </ul>
+    </div>
+  )
 }
