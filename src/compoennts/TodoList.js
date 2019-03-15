@@ -13,16 +13,9 @@ const sortTodoListByLevel = list => list.sort((b, a) => a.level - b.level)
 export default () => {
   const [input, setInput] = useState('')
   const [todoList, setTodoList] = useState([
-    { text: 'foo', level: DEFAULT_LEVEL },
-    { text: 'bar', level: DEFAULT_LEVEL },
-    { text: 'hello', level: DEFAULT_LEVEL },
-    { text: 'world1', level: DEFAULT_LEVEL },
-    { text: 'world2', level: DEFAULT_LEVEL },
-    { text: 'world3', level: DEFAULT_LEVEL },
-    { text: 'world4', level: DEFAULT_LEVEL },
-    { text: 'world5', level: DEFAULT_LEVEL },
-    { text: 'world6', level: DEFAULT_LEVEL },
-    { text: 'world7', level: DEFAULT_LEVEL }
+    { text: 'foo', level: DEFAULT_LEVEL, done: true },
+    { text: 'bar', level: DEFAULT_LEVEL, done: true },
+    { text: 'hello', level: DEFAULT_LEVEL, done: false }
   ])
 
   const onChangeInput = event => setInput(event.target.value)
@@ -56,6 +49,15 @@ export default () => {
     )
   }
 
+  const onDoneChange = (index, value) => {
+    setTodoList(
+      todoList.map((item, itemIndex) => {
+        if (itemIndex === index) item.done = value
+        return item
+      })
+    )
+  }
+
   return (
     <div className={cx(styles)}>
       <input value={input} onChange={onChangeInput} />
@@ -69,6 +71,7 @@ export default () => {
             index={index}
             onClickItemDel={onClickItemDel}
             onIncrementItemLevel={onIncrementItemLevel}
+            onDoneChange={onDoneChange}
           />
         ))}
       </ul>

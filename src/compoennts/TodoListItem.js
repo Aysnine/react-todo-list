@@ -6,10 +6,11 @@ export default props => {
     index,
     onClickItemDel,
     onIncrementItemLevel,
-    info: { text, level }
+    onDoneChange,
+    info: { text, level, done }
   } = props
 
-  const color = LEVEL_COLOR_MAPPER(level)
+  const color = LEVEL_COLOR_MAPPER(done ? -1 : level)
 
   const incrementItemLevel = value => {
     const targetLevel = level + value
@@ -17,8 +18,11 @@ export default props => {
       onIncrementItemLevel(index, value) // to parent
   }
 
+  const doneChange = () => onDoneChange(index, !done)
+
   return (
-    <li>
+    <li style={{ textDecoration: done ? 'line-through' : 'none' }}>
+      <button onClick={() => onClickItemDel(index)}>DEL</button>
       <button
         onClick={() => {
           incrementItemLevel(-1)
@@ -35,7 +39,7 @@ export default props => {
         +
       </button>
       <span style={{ color }}> {text} </span>
-      <button onClick={() => onClickItemDel(index)}>DEL</button>
+      <input type="checkbox" checked={done} onChange={doneChange} />
     </li>
   )
 }
